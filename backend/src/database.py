@@ -21,12 +21,14 @@ async def get_async_session():
     async with AsyncSession(async_engine) as session:
         yield session
 
+
 engine = create_engine(
     DATABASE_URL,
     pool_size=settings.DATABASE_POOL_SIZE,
     pool_recycle=settings.DATABASE_POOL_TTL,
     pool_pre_ping=settings.DATABASE_POOL_PRE_PING,
 )
+
 
 def get_session():
     with Session(engine) as session:
