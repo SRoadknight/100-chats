@@ -1,35 +1,35 @@
 default:
   just --list
 
-run *args:
-  poetry run uvicorn src.main:app --reload {{args}}
+run-backend *args:
+  cd backend && poetry run uvicorn src.main:app --reload {{args}}
+
+run-frontend:
+  cd frontend && npm run dev
 
 mm *args:
-  poetry run alembic revision --autogenerate -m "{{args}}"
+  cd backend && poetry run alembic revision --autogenerate -m "{{args}}"
 
 migrate:
-  poetry run alembic upgrade head
+  cd backend && poetry run alembic upgrade head
+
+migrate-offline *args:
+  cd frontend && generated_file=$(npx supabase migration new "{{args}}" | awk '{print $NF}') \
+  && cd ../backend && poetry run alembic upgrade head --sql > "../frontend/${generated_file}"
+
+reset *args:
+  cd frontend && npx supabase db reset {{args}}
+
+diff *args:
+  cd frontend && npx supabase db diff --local -f "{{args}}"
 
 downgrade *args:
-  poetry run alembic downgrade {{args}}
+  cd backend && poetry run alembic downgrade {{args}}
 
 ruff *args:
-  poetry run ruff check {{args}} src
+  cd backend && poetry run ruff check {{args}} src
 
 lint:
-  poetry run ruff format src
+  cd backend && poetry run ruff format src
   just ruff --fix
-  poetry run ruff format alembic
-
-# docker
-up:
-  docker-compose up -d
-
-kill *args:
-  docker-compose kill {{args}}
-
-build:
-  docker-compose build
-
-ps:
-  docker-compose ps
+  cd backend && poetry run ruff format alembic

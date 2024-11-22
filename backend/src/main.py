@@ -7,16 +7,10 @@ from starlette.middleware.cors import CORSMiddleware
 
 from src.config import app_configs, settings
 
-X = 0
-
 
 @asynccontextmanager
 async def lifespan(_application: FastAPI) -> AsyncGenerator:
     # Startup
-    if settings.ENVIRONMENT == "LOCAL":
-        print("local")
-    else:
-        print("not local")
     yield
     # Shutdown
 
@@ -46,4 +40,4 @@ async def healthcheck() -> dict[str, str]:
 
 @app.get("/")
 def root():
-    return {"message": "Hello world"}
+    return {"message": "Hello World"}
